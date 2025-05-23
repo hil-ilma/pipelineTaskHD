@@ -1,17 +1,28 @@
 version: '3.8'
 
 services:
-  db:
-    image: mysql
-    container_name: companydb
-    restart: always
+  mysql:
+    image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: companydb
-      MYSQL_USER: fazt
-      MYSQL_PASSWORD: faztpassword
     ports:
-      - 3306:3306
+      - "3306:3306"
     volumes:
-      - ./db/:/docker-entrypoint-initdb.d/
-    
+      - db_data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d
+
+  api:
+    build: .
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: 1234
+      DB_NAME: companydb
+    ports:
+      - "3000:3000"
+
+volumes:
+  db_data:
