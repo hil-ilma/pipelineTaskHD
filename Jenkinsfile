@@ -7,13 +7,12 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+            stage('Build') {
             steps {
-                script {
-                    docker.build("${IMAGE_NAME}")
-                }
+                sh 'docker build -t node-api .'
             }
-        }
+            }
+
 
         stage('Test') {
             steps {
