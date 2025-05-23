@@ -2,17 +2,11 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE = 'MySonarQubeServer' // Name from Jenkins > Manage Jenkins > SonarQube Servers
+        SONARQUBE = 'MySonarQubeServer'
         IMAGE_NAME = 'node-api'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/hil-ilma/pipelineTaskHD.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 script {
@@ -24,7 +18,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'npm install'
-                sh 'npm test || true' // Prevents failure if some tests are flaky
+                sh 'npm test || true'
             }
         }
 
@@ -38,13 +32,13 @@ pipeline {
 
         stage('Security') {
             steps {
-                sh "trivy image ${IMAGE_NAME} || true" // Continue even if vulns exist
+                sh "trivy image ${IMAGE_NAME} || true"
             }
         }
 
         stage('Deploy') {
             steps {
-                sh 'docker-compose down || true'  // Clean up previous
+                sh 'docker-compose down || true'
                 sh 'docker-compose up -d --build'
             }
         }
